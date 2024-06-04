@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://unpkg.com/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>Graph Visualization</title>
+</head>
+
+<body class="bg-gray-100 text-gray-900">
+    <div class="container p-2">
+        <div>
+            <div class="w-2/3 flex justify-between mb-2">
+                <span class="text-sm font-medium text-gray-700">100</span>
+                <span class="text-sm font-medium text-gray-700">Delay <span id="ms"></span></span>
+                <span class="text-sm font-medium text-gray-700">2500</span>
+            </div>
+            <input type="range"
+                class="w-2/3 h-2 bg-gray-200 rounded-lg cursor-ew-resize appearance-none transition duration-300 ease-in-out hover:bg-gray-300 disabled:cursor-not-allowed"
+                id="delayRange" min="100" max="2500" value="1000">
+        </div>
+        <div class="flex space-x-4 mb-4 w-2/3 justify-between">
+            <button id="run"
+                class="mt-4 w-20 text-white bg-blue-600 hover:bg-blue-700 h-8 focus:outline-none font-medium rounded-lg text-sm transition duration-300 ease-in-out">Run</button>
+            <button id="reset"
+                class="mt-4 w-20 text-white bg-red-600 hover:bg-red-700 h-8 focus:outline-none font-medium rounded-lg text-sm transition duration-300 ease-in-out">Reset</button>
+        </div>
+        <div class="text-center w-2/3">
+            <div id="start-end" class="text-lg font-bold mb-2">Start: N/A, End: N/A</div>
+            <div id="result" class="text-lg font-bold mb-4">Shortest path: </div>
+        </div>
+        <div class="flex space-x-3">
+            <div>
+                <svg id="graph" width="672" height="409" class="border border-gray-400">
+                    <!-- Edges -->
+                    <line id="edgeAC" x1="200" y1="150" x2="100" y2="100" stroke="black" stroke-width="1"></line>
+                    <text id="weightAC" x="150" y="150" fill="black">2</text>
+
+                    <line id="edgeAH" x1="100" y1="100" x2="550" y2="50" stroke="black" stroke-width="1"></line>
+                    <text id="weightAH" x="350" y="90" fill="black">6</text>
+
+                    <line id="edgeHG" x1="550" y1="50" x2="600" y2="350" stroke="black" stroke-width="1"></line>
+                    <text id="weightHG" x="580" y="190" fill="black">8</text>
+
+                    <line id="edgeAI" x1="170" y1="350" x2="100" y2="100" stroke="black" stroke-width="1"></line>
+                    <text id="weightAI" x="120" y="250" fill="black">8</text>
+
+                    <line id="edgeIG" x1="170" y1="350" x2="600" y2="350" stroke="black" stroke-width="1"></line>
+                    <text id="weightIG"   x="350" y="345" fill="black">7</text>
+
+                    <line id="edgeCF" x1="200" y1="150" x2="200" y2="250" stroke="black" stroke-width="1"></line>
+                    <text id="weightCF" x="180" y="205" fill="black">3</text>
+
+                    <line id="edgeCE" x1="200" y1="150" x2="300" y2="200" stroke="black" stroke-width="1"></line>
+                    <text id="weightCE" x="250" y="160" fill="black">8</text>
+
+                    <line id="edgeFE" x1="200" y1="250" x2="300" y2="200" stroke="black" stroke-width="1"></line>
+                    <text id="weightFE" x="250" y="240" fill="black">1</text>
+
+                    <line id="edgeED" x1="300" y1="200" x2="500" y2="150" stroke="black" stroke-width="1"></line>
+                    <text id="weightED" x="400" y="170" fill="black">2</text>
+
+                    <line id="edgeEB" x1="300" y1="200" x2="500" y2="300" stroke="black" stroke-width="1"></line>
+                    <text id="weightEB" x="400" y="250" fill="black">12</text>
+
+                    <line id="edgeBG" x1="500" y1="300" x2="600" y2="350" stroke="black" stroke-width="1"></line>
+                    <text id="weightBG" x="550" y="310" fill="black">1</text>
+
+                    <line id="edgeDB" x1="500" y1="150" x2="500" y2="300" stroke="black" stroke-width="1"></line>
+                    <text id="weightDB" x="510" y="225" fill="black">3</text>
+
+                    <!-- vertex -->
+                    <circle id="vertexA" cx="100" cy="100" r="30" style="fill: #ff5151" class="cursor-pointer" />
+                    <text id="labelA" x="100" y="100" text-anchor="middle" dy=".3em">A</text>
+                    <text id="distanceA" x="100" y="120" text-anchor="middle" fill="black">∞</text>
+
+                    <circle id="vertexC" cx="200" cy="150" r="30" style="fill: #ff5151" class="cursor-pointer" />
+                    <text id="labelC" x="200" y="150" text-anchor="middle" dy=".3em">C</text>
+                    <text id="distanceC" x="200" y="170" text-anchor="middle" fill="black">∞</text>
+
+                    <circle id="vertexE" cx="300" cy="200" r="30" style="fill: #ff5151" class="cursor-pointer" />
+                    <text id="labelE" x="300" y="200" text-anchor="middle" dy=".3em">E</text>
+                    <text id="distanceE" x="300" y="220" text-anchor="middle" fill="black">∞</text>
+
+                    <circle id="vertexH" cx="550" cy="50" r="30" style="fill: #ff5151" class="cursor-pointer" />
+                    <text id="labelH" x="550" y="50" text-anchor="middle" dy=".3em">H</text>
+                    <text id="distanceH" x="550" y="70" text-anchor="middle" fill="black">∞</text>
+
+                    <circle id="vertexI" cx="170" cy="350" r="30" style="fill: #ff5151" class="cursor-pointer" />
+                    <text id="labelI" x="170" y="350" text-anchor="middle" dy=".3em">I</text>
+                    <text id="distanceI" x="170" y="370" text-anchor="middle" fill="black">∞</text>
+
+                    <circle id="vertexF" cx="200" cy="250" r="30" style="fill: #ff5151" class="cursor-pointer" />
+                    <text id="labelF" x="200" y="250" text-anchor="middle" dy=".3em">F</text>
+                    <text id="distanceF" x="200" y="270" text-anchor="middle" fill="black">∞</text>
+
+                    <circle id="vertexD" cx="500" cy="150" r="30" style="fill: #ff5151" class="cursor-pointer" />
+                    <text id="labelD" x="500" y="150" text-anchor="middle" dy=".3em">D</text>
+                    <text id="distanceD" x="500" y="170" text-anchor="middle" fill="black">∞</text>
+
+                    <circle id="vertexB" cx="500" cy="300" r="30" style="fill: #ff5151" class="cursor-pointer" />
+                    <text id="labelB" x="500" y="300" text-anchor="middle" dy=".3em">B</text>
+                    <text id="distanceB" x="500" y="320" text-anchor="middle" fill="black">∞</text>
+
+                    <circle id="vertexG" cx="600" cy="350" r="30" style="fill: #ff5151;" class="cursor-pointer" />
+                    <text id="labelG" x="600" y="350" text-anchor="middle" dy=".3em">G</text>
+                    <text id="distanceG" x="600" y="370" text-anchor="middle" fill="black">∞</text>
+                </svg>
+            </div>
+            <div>
+                <table id="distance-table" class="table-auto border-collapse border border-gray-400">
+                    <thead>
+                        <tr>
+                            <th class="border border-gray-300 px-4 py-2">Vertex</th>
+                            <th class="border border-gray-300 px-4 py-2">Distance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr id="rowA">
+                            <td class="border border-gray-300 px-4 py-2">A</td>
+                            <td id="tableDistanceA" class="border border-gray-300 px-4 py-2">∞</td>
+                        </tr>
+                        <tr id="rowC">
+                            <td class="border border-gray-300 px-4 py-2">C</td>
+                            <td id="tableDistanceC" class="border border-gray-300 px-4 py-2">∞</td>
+                        </tr>
+                        <tr id="rowE">
+                            <td class="border border-gray-300 px-4 py-2">E</td>
+                            <td id="tableDistanceE" class="border border-gray-300 px-4 py-2">∞</td>
+                        </tr>
+                        <tr id="rowF">
+                            <td class="border border-gray-300 px-4 py-2">F</td>
+                            <td id="tableDistanceF" class="border border-gray-300 px-4 py-2">∞</td>
+                        </tr>
+                        <tr id="rowD">
+                            <td class="border border-gray-300 px-4 py-2">D</td>
+                            <td id="tableDistanceD" class="border border-gray-300 px-4 py-2">∞</td>
+                        </tr>
+                        <tr id="rowB">
+                            <td class="border border-gray-300 px-4 py-2">B</td>
+                            <td id="tableDistanceB" class="border border-gray-300 px-4 py-2">∞</td>
+                        </tr>
+                        <tr id="rowG">
+                            <td class="border border-gray-300 px-4 py-2">G</td>
+                            <td id="tableDistanceG" class="border border-gray-300 px-4 py-2">∞</td>
+                        </tr>
+                        <tr id="rowH">
+                            <td class="border border-gray-300 px-4 py-2">H</td>
+                            <td id="tableDistanceH" class="border border-gray-300 px-4 py-2">∞</td>
+                        </tr>
+                        <tr id="rowI">
+                            <td class="border border-gray-300 px-4 py-2">I</td>
+                            <td id="tableDistanceI" class="border border-gray-300 px-4 py-2">∞</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script src="script.js" type="module"></script>
+    <script src="view.js" type="module"></script>
+    <script src="model.js" type="module"></script>
+</body>
+
+</html>
