@@ -23,20 +23,22 @@ async function dijkstra(start, end) {
     const distances = {};
     const previous = {};
     let visited = new Set();
-    let vertexes = Object.keys(graph);
+    let vertices = Object.keys(graph);
 
-    vertexes.forEach(vertex => {
+    vertices.forEach(vertex => {
         distances[vertex] = Infinity;
     });
 
     distances[start] = 0;
 
-    while (vertexes.length) {
-        clearHighlightedNeighbors();
-        vertexes.sort((a, b) => distances[a] - distances[b]);
-        console.log(vertexes)
-        let closestVertex = vertexes.shift();
+    while (vertices.length) {
+
+        vertices.sort((a, b) => distances[a] - distances[b]);
+        console.log(vertices)
+        let closestVertex = vertices.shift();
         if (distances[closestVertex] === Infinity) break;
+
+        clearHighlightedNeighbors();
 
         visited.add(closestVertex);
         await updateVertexDistance(closestVertex, distances[closestVertex], delay);
@@ -55,7 +57,10 @@ async function dijkstra(start, end) {
             }
         }
     }
+    findShortestPath(end, previous, visited, start);
+}
 
+async function findShortestPath(end, previous, visited, start) {
     let path = [];
     let pathVertex = end;
     let pathSet = new Set();
@@ -112,6 +117,6 @@ function resetGraph() {
 }
 
 document.getElementById('delayRange').addEventListener('input', function (event) {
-    document.getElementById("ms").innerHTML = `${delay} ms`;
     delay = parseInt(event.target.value);
+    document.getElementById("ms").innerHTML = `${delay} ms`;
 });
