@@ -5,8 +5,26 @@ export const graph = {
     F: { C: 3, E: 1 },
     D: { E: 2, B: 3 },
     B: { E: 12, D: 3, G: 1 },
-    G: { B: 1, H: 8, I: 7},
+    G: { B: 1, H: 8, I: 7 },
     H: { A: 6, G: 8 },
     I: { A: 8, G: 7 }
 };
 
+export class PriorityQueue {
+    constructor() {
+        this.queue = [];
+    }
+
+    enqueue(vertex, priority) {
+        this.queue.push({ vertex, priority });
+        this.queue.sort((a, b) => a.priority - b.priority);
+    }
+
+    dequeue() {
+        return this.queue.shift();
+    }
+
+    isEmpty() {
+        return this.queue.length === 0;
+    }
+}

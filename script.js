@@ -1,5 +1,5 @@
-import { highlightEdge, highlightNeighbor, clearHighlightedNeighbors, updateVertexDistance, clearGraph } from './view.js';
-import { graph } from './model.js';
+import { highlightEdge, highlightNeighbor, clearHighlightedEdges, updateVertexDistance, clearGraph } from './view.js';
+import { graph, PriorityQueue } from './model.js';
 
 console.log("script running");
 
@@ -19,25 +19,33 @@ document.querySelectorAll('circle').forEach(circle => {
     });
 });
 
+
+
 async function dijkstra(start, end) {
     const distances = {};
     const previous = {};
+    const pq = new PriorityQueue();
     let visited = new Set();
-    let vertices = Object.keys(graph);
 
-    vertices.forEach(vertex => {
+    Object.keys(graph).forEach(vertex => {
         distances[vertex] = Infinity;
+        previous[vertex] = null;
     });
 
     distances[start] = 0;
+    pq.enqueue(start, 0);
 
-    while (vertices.length) {
-        vertices.sort((a, b) => distances[a] - distances[b]);
-        console.log(vertices)
-        let closestVertex = vertices.shift();
+    while (!pq.isEmpty()) {
+        const { vertex: closestVertex } = pq.dequeue();
+
+        console.log(`Processing vertex: ${closestVertex}, Distance: ${distances[closestVertex]}`);
+        console.log(`Priority queue state:`, pq.queue);
+
+        if (closestVertex === end) break;
+
         if (distances[closestVertex] === Infinity) break;
 
-        clearHighlightedNeighbors();
+        clearHighlightedEdges();
 
         visited.add(closestVertex);
         await updateVertexDistance(closestVertex, distances[closestVertex], delay);
@@ -47,25 +55,27 @@ async function dijkstra(start, end) {
                 highlightNeighbor(closestVertex, neighbor);
                 await sleep(delay);
                 let newDistance = distances[closestVertex] + graph[closestVertex][neighbor];
-                await sleep(delay);
                 if (newDistance < distances[neighbor]) {
                     distances[neighbor] = newDistance;
                     previous[neighbor] = closestVertex;
+                    pq.enqueue(neighbor, newDistance);
                     await updateVertexDistance(neighbor, newDistance, delay);
                 }
             }
         }
     }
-    findShortestPath(end, previous, visited, start);
+    await findShortestPath(end, previous, start);
 }
 
-async function findShortestPath(end, previous, visited, start) {
+async function findShortestPath(end, previous, start) {
     let path = [];
     let pathVertex = end;
     let pathSet = new Set();
     let totalDistance = 0;
     let pathDetails = [];
 
+    clearHighlightedEdges();
+    
     while (pathVertex) {
         path.push(pathVertex);
         pathSet.add(pathVertex);
@@ -80,15 +90,16 @@ async function findShortestPath(end, previous, visited, start) {
     path.reverse();
     pathDetails.reverse();
 
-    let pathString = `Shortest path: ${start} -> ${pathDetails.join(' -> ')}, total: ${totalDistance}`;
+    let pathString = `Shortest path: ${start} -> ${pathDetails.join(' -> ')}, Total: ${totalDistance}`;
     document.getElementById('result').innerText = pathString;
 
-    visited.forEach(vertex => {
+    Object.keys(graph).forEach(async vertex => {
         if (!pathSet.has(vertex)) {
             document.getElementById(`vertex${vertex}`).style.fill = '#ff5151';
         }
     });
 }
+
 
 export let delay = 1000;
 document.getElementById("ms").innerHTML = `${delay} ms`;

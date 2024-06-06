@@ -26,8 +26,7 @@ export function highlightNeighbor(vertex, neighbor) {
     }
 }
 
-
-export function clearHighlightedNeighbors() {
+export function clearHighlightedEdges() {
     document.querySelectorAll('line').forEach(line => {
         line.style.stroke = '#000';
         line.style.strokeWidth = 1;
@@ -54,7 +53,7 @@ export function clearGraph() {
 
 
 
-export async function updateVertexDistance(vertex, distance, delay) {   
+export async function updateVertexDistance(vertex, distance, delay) {
     const distanceText = distance === Infinity ? '∞' : distance;
     document.getElementById('distance' + vertex).textContent = distanceText;
     document.getElementById('tableDistance' + vertex).textContent = distanceText;
