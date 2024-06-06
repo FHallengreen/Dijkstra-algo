@@ -19,8 +19,6 @@ document.querySelectorAll('circle').forEach(circle => {
     });
 });
 
-
-
 async function dijkstra(start, end) {
     const distances = {};
     const previous = {};
@@ -48,7 +46,7 @@ async function dijkstra(start, end) {
         clearHighlightedEdges();
 
         visited.add(closestVertex);
-        await updateVertexDistance(closestVertex, distances[closestVertex], delay);
+        await updateVertexDistance(closestVertex, distances[closestVertex], previous[closestVertex], delay);
 
         for (let neighbor in graph[closestVertex]) {
             if (!visited.has(neighbor)) {
@@ -59,7 +57,7 @@ async function dijkstra(start, end) {
                     distances[neighbor] = newDistance;
                     previous[neighbor] = closestVertex;
                     pq.enqueue(neighbor, newDistance);
-                    await updateVertexDistance(neighbor, newDistance, delay);
+                    await updateVertexDistance(neighbor, newDistance, closestVertex, delay);
                 }
             }
         }
@@ -75,7 +73,7 @@ async function findShortestPath(end, previous, start) {
     let pathDetails = [];
 
     clearHighlightedEdges();
-    
+
     while (pathVertex) {
         path.push(pathVertex);
         pathSet.add(pathVertex);
@@ -100,7 +98,6 @@ async function findShortestPath(end, previous, start) {
     });
 }
 
-
 export let delay = 1000;
 document.getElementById("ms").innerHTML = `${delay} ms`;
 
@@ -116,7 +113,6 @@ async function runAnimation() {
         alert("Please select both start and end vertices.");
         return;
     }
-
     await dijkstra(startVertex, endVertex);
 }
 

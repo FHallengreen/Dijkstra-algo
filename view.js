@@ -49,18 +49,22 @@ export function clearGraph() {
     document.querySelectorAll('td[id^="tableDistance"]').forEach(value => {
         value.innerText = '∞';
     });
+
+    document.querySelectorAll('td[id^="previous"]').forEach(value => {
+        value.innerText = '-';
+    });
 }
 
-
-
-export async function updateVertexDistance(vertex, distance, delay) {
+export async function updateVertexDistance(vertex, distance, previous, delay) {
     const distanceText = distance === Infinity ? '∞' : distance;
     document.getElementById('distance' + vertex).textContent = distanceText;
     document.getElementById('tableDistance' + vertex).textContent = distanceText;
+
+    const previousText = previous ? previous : '-';
+    document.getElementById('previous' + vertex).textContent = previousText;
+
     if (distance !== Infinity) {
         document.getElementById(`vertex${vertex}`).setAttribute("style", "fill: #88bb88");
     }
     await sleep(delay);
 }
-
-
